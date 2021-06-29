@@ -5,6 +5,8 @@ public class Item {
     String title;
     int set, run_sec, run_min, rest_sec, rest_min;
 
+    // int a;
+
     public Item(String title, int set, int run_sec, int run_min, int rest_sec, int rest_min) {
 
         this.title = title;
