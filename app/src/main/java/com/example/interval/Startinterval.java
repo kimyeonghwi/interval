@@ -112,7 +112,7 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
         run_time = false;
         rest_time = false;
         waiting_time = true;
-        is_first = false;
+
         set = intent.getIntExtra("set", 0);
         min_run = intent.getIntExtra("min_run", 0);
         sec_run = intent.getIntExtra("sec_run", 0);
@@ -150,6 +150,7 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.img_restart:
+                is_first = false;
                 background.setVisibility(View.VISIBLE);
                 background2.setVisibility(View.GONE);
                 start();
@@ -200,8 +201,7 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
                                     Log.d("hi", "=======운동끝=======");
                                     run_time = false;
                                     rest_time = true;
-                                }
-                                if (sec_run != 0) {
+                                }else if (sec_run != 0) {
                                     Log.d("hi", "run_time:" + min_run + ":" + sec_run);
                                     sec_run--;
                                 } else if (min_run != 0) {
@@ -218,7 +218,6 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
                                 message.arg1 = sec_rest;
                                 message.arg2 = min_rest;
                                 handler.sendMessage(message);
-
                                 if (sec_rest == 0 && min_rest == 0) {
                                     message = new Message();
                                     message.what = 4;
@@ -226,11 +225,9 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
                                     Log.d("hi", "=======휴식끝=======");
                                     set_title--;
                                     loop = false;
-                                }
-                                if (sec_rest != 0) {
+                                }else if (sec_rest != 0) {
                                     Log.d("hi", "rest_time:" + min_rest + ":" + sec_rest);
                                     sec_rest--;
-
                                 } else if (min_rest != 0) {
                                     Log.d("hi", "rest_time:" + min_rest + ":" + sec_rest);
                                     sec_rest = 60;
@@ -260,7 +257,6 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void handleMessage(@NonNull Message msg) {
-            //미디어플레이어로 한번만 소리 나게 해주기도 해야한다.... 이건 물어봐야할거 같다... 슈발
 
             switch (msg.what) {
 
@@ -287,7 +283,7 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
                             txt_min.setText(Integer.toString(msg.arg2));
                         }
 
-                        if (msg.arg1 <= 5) {
+                        if (msg.arg1 <= 5 && msg.arg2 == 0) {
                             mediaPlayer.start();
                         }
 
@@ -309,7 +305,7 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
                             txt_min.setText(Integer.toString(msg.arg2));
                         }
 
-                        if (msg.arg1 <= 5 && msg.arg1 > 0) {
+                        if (msg.arg1 <= 5 && msg.arg1 > 0 ) {
                             mediaPlayer.start();
                         }
 
@@ -326,8 +322,6 @@ public class Startinterval extends AppCompatActivity implements View.OnClickList
                     background.setVisibility(View.GONE);
                     background2.setVisibility(View.VISIBLE);
             }
-
-
         }
     }
 }
