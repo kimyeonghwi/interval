@@ -1,17 +1,22 @@
 package com.example.interval;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     boolean first = true;
     String title;
+    SQLiteDatabase db;
+    SQLiteOpenHelper helper;
+
+    int version =1;
+    String db_name = "INTERVAL";
+    String tb_name = "interval_tb";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         listAdapter = new ListAdapter();
         listView.setAdapter(listAdapter);
+        creatDB();
 
         Button button = findViewById(R.id.button);
         imgBtn2.setOnClickListener(new View.OnClickListener() {
@@ -69,8 +81,30 @@ public class MainActivity extends AppCompatActivity {
 
                 EditText edt_name = layout.findViewById(R.id.edt_Title);
 
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                        Item item = listAdapter.list.get(position);
+                        sec_run = item.getRun_sec();
+                        sec_rest = item.getRest_sec();
+                        min_run = item.getRun_min();
+                        min_rest = item.getRest_min();
+                        set = item.getSet();
 
+                        sendIntent(set,sec_rest,sec_run,min_rest,min_run);
+
+                    }
+                });
+
+                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                        listAdapter.list.remove(position);
+                        listAdapter.notifyDataSetChanged();
+                        return true;
+                    }
+                });
 
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
@@ -97,13 +131,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), Startinterval.class);
                 edtget();
 
-                intent.putExtra("set", set);
-                intent.putExtra("min_run", min_run);
-                intent.putExtra("sec_run", sec_run);
-                intent.putExtra("min_rest", min_rest);
-                intent.putExtra("sec_rest", sec_rest);
+                sendIntent(set,sec_rest,sec_run,min_rest,min_run);
 
-                startActivity(intent);
+
             }
         });
 
@@ -126,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     public void edtget() {
 
@@ -154,5 +186,53 @@ public class MainActivity extends AppCompatActivity {
         }
 
         set = Integer.parseInt(edt_set.getText().toString());
+    }
+    //디비에 생성주기
+    public void creatDB(){
+        helper = new DatabaseHelper(this);
+        db = helper.getWritableDatabase();
+    }
+
+    //디비에 넣어주기
+    public void saveDB(String title , int set , int sec_run  , int min_run , int min_rest , int sec_rest ){
+        String sql = "INSERT INTO " + tb_name + "(title , set_cycle, min_run, sec_run ,min_rest,sec_rest) VAlUES ("
+        db.execSQL();
+    }
+
+    //디비에 삭제하기
+    public void deleteDB(String title){
+
+    }
+
+    public void sendIntent (int set, int sec_rest , int sec_run , int min_rest, int min_run){
+        Intent  intent = new Intent(getApplicationContext(), Startinterval.class);
+
+        intent.putExtra("set", set);
+        intent.putExtra("min_run", min_run);
+        intent.putExtra("sec_run", sec_run);
+        intent.putExtra("min_rest", min_rest);
+        intent.putExtra("sec_rest", sec_rest);
+
+        startActivity(intent);
+
+    }
+
+
+    class DatabaseHelper extends SQLiteOpenHelper{
+
+
+        public DatabaseHelper(@Nullable Context context) {
+            super(context, db_name, null, version);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS "+ tb_name +"(title char(10), set_cycle INTEGER ,min_run INTEGER, sec_run INTEGER, min_rest INTEGER , sec_rest INTEGER )");
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        }
     }
 }
