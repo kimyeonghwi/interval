@@ -195,8 +195,8 @@ public class MainActivity extends AppCompatActivity {
 
     //디비에 넣어주기
     public void saveDB(String title , int set , int sec_run  , int min_run , int min_rest , int sec_rest ){
-        String sql = "INSERT INTO " + tb_name + "(title , set_cycle, min_run, sec_run ,min_rest,sec_rest) VAlUES ("
-        db.execSQL();
+        // String sql = "INSERT INTO " + tb_name + "(title , set_cycle, min_run, sec_run ,min_rest,sec_rest) VAlUES ("
+
     }
 
     //디비에 삭제하기
